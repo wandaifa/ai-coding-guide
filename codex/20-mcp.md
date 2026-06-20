@@ -80,14 +80,7 @@ MCP server 不止一种。理解它们的区别，你才知道抄来的配置该
 
 把两种形态怎么把 Codex 接到外部世界，画成一张图：
 
-```mermaid
-flowchart LR
-    A[Codex<br/>本地自带工具<br/>读写文件 / 跑命令] --> B{MCP 接口}
-    B -->|STDIO<br/>本地拉起进程| C[本地 server]
-    B -->|Streamable HTTP<br/>连网址 + 鉴权| D[远程 server]
-    C --> E[本地浏览器 / 文件工具]
-    D --> F[Figma / 云端文档 / GitHub]
-```
+![MCP 给 Codex 接外部工具的两条路：本地 server 走 STDIO（拉进程）/ 远程 server 走 Streamable HTTP（连网址）](assets/20-mcp-route@2x.png)
 
 这张图在说：**Codex 自带的本能只够得着左边的本地文件和命令**；中间的 MCP 接口用 STDIO（在本地拉起一个进程）和 Streamable HTTP（连到一个网址、带鉴权）两种线，把右边它本来够不着的外部工具接进来。
 

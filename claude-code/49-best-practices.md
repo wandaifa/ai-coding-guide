@@ -107,12 +107,7 @@
 
 官方推荐的工作流分四步，我用上面那个实习生的比方串一遍你就懂了：
 
-```mermaid
-flowchart LR
-    A["① 探索<br/>Plan Mode 只读不改<br/>读相关文件、答疑"] --> B["② 规划<br/>让它出详细方案<br/>Ctrl+G 可直接改"]
-    B --> C["③ 实现<br/>退出 Plan Mode<br/>照方案写 + 自我验证"]
-    C --> D["④ 提交<br/>写清晰 commit<br/>开 PR"]
-```
+![Claude Code 最佳实践四步循环：探索（Plan Mode）→ 规划 → 实现 → 提交](assets/49-best-practice-flow@2x.png)
 
 这张图是官方那套四阶段工作流：左边两步「想清楚」、右边两步「干出来」，中间那道竖线（退出 Plan Mode）就是从「动脑」切到「动手」的开关。
 

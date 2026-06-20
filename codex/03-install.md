@@ -209,14 +209,7 @@ codex
 
 下面这张图帮你三步决策走哪条路：
 
-```mermaid
-flowchart TD
-  A[你在 Windows 上想装 Codex CLI] --> B{需要 Linux 原生工具链<br/>或仓库已在 WSL2?}
-  B -- 是 --> C[走 WSL2<br/>在 WSL shell 里跑安装脚本]
-  B -- 否 --> D{公司策略允许<br/>管理员级沙箱配置?}
-  D -- 允许 --> E[原生 Windows<br/>elevated 沙箱-首选]
-  D -- 被卡住 --> F[原生 Windows<br/>unelevated 沙箱-退路]
-```
+![Windows 装 Codex 的三条路：WSL2 / 原生 elevated 沙箱 / 原生 unelevated 沙箱](assets/03-windows-decision@2x.png)
 
 这张图就一句话：**优先原生 elevated，被公司策略卡了退到 unelevated，需要 Linux 环境才上 WSL2**。
 
@@ -347,15 +340,7 @@ git add -A && git commit -m "codex 动手前的检查点"
 
 下面这张图把上面几步串成一条线：
 
-```mermaid
-flowchart LR
-  A[mkdir + cd<br/>建测试目录] --> B[codex<br/>启动并登录]
-  B --> C[大白话下指令]
-  C --> D{Codex 给出动作<br/>等你审批}
-  D -- 选 Yes --> E[执行/改文件]
-  D -- 选 No --> C
-  E --> F[Git 检查点<br/>方便回退]
-```
+![第一次跑通 Codex 的完整循环：mkdir → codex 登录 → 大白话指令 → 审批 → Git 检查点](assets/03-first-loop@2x.png)
 
 图里最关键的就是中间那个**审批岔口**：你点 Yes 它才动手，点 No 就退回来重说——全程它不偷偷改你的东西。
 

@@ -61,18 +61,7 @@
 
 把这个节奏画出来，你一眼就懂检查点是怎么沿着你的对话「一路落点」的：
 
-```mermaid
-flowchart LR
-    P1["提示 1<br/>改登录逻辑"] --> C1(["检查点 1"])
-    C1 --> P2["提示 2<br/>加错误处理"]
-    P2 --> C2(["检查点 2"])
-    C2 --> P3["提示 3<br/>重构（改坏了）"]
-    P3 --> C3(["检查点 3"])
-    C3 -.->|"/rewind 倒带"| C1
-    style C1 fill:#1e3a5f,stroke:#4a90d9,color:#fff
-    style C2 fill:#1e3a5f,stroke:#4a90d9,color:#fff
-    style C3 fill:#1e3a5f,stroke:#4a90d9,color:#fff
-```
+![检查点时间轴：每条提示前自动存档；改坏了 /rewind 倒带回任意检查点（代码 + 对话一起回）](assets/37-checkpoint-rewind@2x.png)
 
 这张图画的是：你每发一条提示，Claude 动手之前先落一个检查点（蓝色节点）；等改到提示 3 发现搞砸了，一句 `/rewind` 就能顺着那条虚线**跳回检查点 1**，把提示 2、3 的改动连同对话一起退掉——这正是它「随时能倒带」的本质。
 

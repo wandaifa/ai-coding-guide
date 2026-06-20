@@ -75,31 +75,7 @@ OpenAI 把 Codex 拆成四个入口，但官网首页的下载大按钮、文档
 
 先上一张分区示意图，看不到图也不影响，记住下面的拆解就行：
 
-```mermaid
-flowchart LR
-    subgraph L["左边栏 · 导航"]
-      direction TB
-      L1["新线程"]
-      L2["搜索"]
-      L3["插件 Plugins"]
-      L4["自动化 Automations"]
-      L5["项目 Projects"]
-      L6["普通对话 Chats"]
-    end
-    subgraph M["中间 · 对话与执行"]
-      direction TB
-      M1["Codex 对话流"]
-      M2["底部输入框"]
-      M3["模式 / 模型 / 权限选择"]
-    end
-    subgraph R["右边面板 · 看结果"]
-      direction TB
-      R1["Diff 审阅"]
-      R2["内置终端"]
-      R3["浏览器 / 文件 / 来源预览"]
-    end
-    L --> M --> R
-```
+![Codex 桌面 App 三栏布局：左导航 → 中对话执行 → 右看结果（Diff / 终端 / 预览）](assets/07-three-pane@2x.png)
 
 这张图想说的是：**你从左边栏挑「在哪个项目、开哪个线程」→ 在中间跟 Codex 对话、下指令 → 在右边面板审阅它干出来的结果**，工作流是从左到右流动的。下面逐块拆。
 

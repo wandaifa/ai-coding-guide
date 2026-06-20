@@ -337,18 +337,7 @@ my-first-plugin/
 
 下面这张图把本篇两条主线收在一起：左边「加市场 → 装插件 → 调用」的使用流，右边一个插件盒子打包的三类组件外加 hook，以及它们装进来后各自的「进场方式」。
 
-```mermaid
-flowchart LR
-    A["加市场<br/>marketplace add"] --> B["插件目录<br/>/plugins"]
-    B --> C["装插件<br/>Install"]
-    C --> D["新开线程<br/>描述任务 / @点名"]
-    P["插件盒子<br/>.codex-plugin/plugin.json"]
-    P --> S["Skills<br/>装上即用"]
-    P --> AP["Apps<br/>用前授权"]
-    P --> M["MCP servers<br/>用前可能认证"]
-    P --> H["Hooks<br/>审过才信任"]
-    C -.装进来.-> P
-```
+![Codex 插件解剖：一个盒子打包 Skills / Apps / MCP / Hooks 四类组件；从市场加 → 装 → 新开线程使用](assets/23-plugin-anatomy@2x.png)
 
 这张图在干什么：上排是你作为「用户」从加市场到调用的四步使用流；下排是一个插件盒子里到底打包了什么——三类组件加 hook，每个后面标着它的进场门槛，一眼看清「哪个装上就能用、哪个还要你再点一道头」。
 

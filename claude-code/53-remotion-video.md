@@ -160,16 +160,7 @@ export const Hello = () => {
 
 我先用一张流程图把全景画出来，再逐步拆。
 
-```mermaid
-flowchart TD
-    A["① 准备环境<br/>装 Node.js 18+ 和 Claude Code"] --> B["② 描述需求<br/>把视频要求讲给 Claude Code"]
-    B --> C["③ 它搭项目 + 写代码<br/>脚手架 / 动画逻辑全自动生成"]
-    C --> D["④ 预览<br/>npx remotion studio 拖时间轴看效果"]
-    D --> E{满意?}
-    E -- "不满意" --> F["用大白话告诉 Claude 改<br/>预览自动热更新"]
-    F --> D
-    E -- "满意" --> G["⑤ 渲染导出<br/>npx remotion render 得到 mp4"]
-```
+![Claude Code + Remotion 视频流程：装环境 → 描述需求 → Claude 自动写代码 → 预览 → 满意导出 / 不满意改](assets/53-remotion-flow@2x.png)
 
 这张图说的是：**装好环境后，你跟 Claude 描述需求 → 它生成代码 → 你预览 → 不满意就用嘴让它改、满意就渲染成 mp4**，中间「预览—改—再预览」会转好几圈，这是常态。
 

@@ -92,14 +92,7 @@
 
 把 Slack 这套流程画成一张图：
 
-```mermaid
-flowchart TD
-    A["你在 Slack @Codex<br/>说需求(可点名仓库)"] --> B["Codex 反应 👀<br/>回一条任务链接"]
-    B --> C["云端新建容器<br/>拉 GitHub 仓库"]
-    C --> D["Agent 干活<br/>读代码 / 改代码 / 跑测试"]
-    D --> E["结果回到 thread<br/>(答复可被管理员关掉)"]
-    E --> F["点任务链接<br/>查进度 / 提 PR"]
-```
+![Slack @Codex 完整流程：@提需求 → 回任务链接 → 云端建容器拉仓库 → Agent 干活 → 回 thread → 点链接进 Web](assets/29-slack-flow@2x.png)
 
 这张图想说的是：**Slack 里 @ 一下，后面那条「建容器→拉仓库→Agent 干活→交结果」的链路，跟你在浏览器派云端任务一模一样**——入口变了，底层还是第 10 篇那条云端流水线。
 

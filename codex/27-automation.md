@@ -163,15 +163,7 @@ jobs:
 
 说白了，**`final-message` 就是 Codex 干完活那张「纸条」**——你拿它去贴 PR 评论、去发 Slack、去当门禁判断，都行。整份 workflow 的数据流就一条线：**Codex 审完 → 结果进 `final-message` → 下一个 job 接住 → 贴回 PR**。
 
-```mermaid
-flowchart LR
-    A[PR 开了 / 推了代码] --> B[checkout 取下代码]
-    B --> C[codex-action 跑 codex exec<br/>按 prompt-file 审查]
-    C --> D[结果进 final-message 输出]
-    D --> E{内容非空?}
-    E -->|是| F[post_feedback job<br/>贴成 PR 评论]
-    E -->|否| G[啥也不做]
-```
+![GitHub Action 调 codex exec：PR 触发 → checkout → 跑 codex exec 按 prompt 审 → 非空贴 PR 评论](assets/27-cicd-action@2x.png)
 
 这张图把上面那份 YAML 的来龙去脉理直了：**事件触发 → 取代码 → Codex 审 → 结果走 `final-message` → 有内容就贴回 PR**，两班人接力，一步不少。
 

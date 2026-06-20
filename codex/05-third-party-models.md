@@ -84,18 +84,7 @@
 
 假设你看完上面还是想试。先别急着抄配置——**接入有两条路线，选错了白费劲。**
 
-```mermaid
-flowchart TD
-    A[想给 Codex 接 DeepSeek] --> B{选哪条路}
-    B -->|路线一| C[手改 config.toml<br/>自定义 model_providers]
-    B -->|路线二| D[装第三方代理工具<br/>本地起代理转发请求]
-    C --> E[依赖: 模型平台<br/>支持 Codex 认的协议]
-    D --> F[依赖: 代理工具<br/>替你处理协议转换]
-    E --> G{协议对得上?}
-    F --> G
-    G -->|能| H[接通, /status 验证]
-    G -->|不能| I[400/格式错<br/>换模型或换路线]
-```
+![Codex 接 DeepSeek 等第三方模型的两条路线：手改 config.toml 直连 vs 装第三方代理工具转协议](assets/05-third-party-route@2x.png)
 
 这张图是接入决策的全貌：两条路殊途同归，但**最终都得过「协议」这一关**——这是 Codex 接第三方绕不开的门槛。
 

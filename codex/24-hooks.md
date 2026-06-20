@@ -158,17 +158,7 @@ codex execpolicy check --pretty \
 
 回想第 [02](02-core-concepts.md) 篇讲的「代理循环」——Codex 干活是「想 → 做 → 看」转圈。这些事件，正好散布在这个循环的前前后后。先画张图，看几个最常用的事件卡在哪儿：
 
-```mermaid
-flowchart TD
-    A["会话开始<br/>SessionStart"] --> B["你提交提示<br/>UserPromptSubmit"]
-    B --> C{"Codex 想：<br/>要不要用工具？"}
-    C -->|要用工具| D["工具执行前<br/>PreToolUse"]
-    D --> E["工具真正执行<br/>（改文件 / 跑命令）"]
-    E --> F["工具执行后<br/>PostToolUse"]
-    F --> C
-    C -->|不用了，答完| G["这一轮结束<br/>Stop"]
-    G --> A
-```
+![Codex 钩子生命周期：SessionStart → UserPromptSubmit → 要不要用工具？要用走 Pre/Post 循环；不用 Stop 收尾](assets/24-hook-lifecycle@2x.png)
 
 这张图把「想 → 做 → 看」摊开了：一进会话是 `SessionStart`，你说话是 `UserPromptSubmit`，然后进入「要不要用工具」的循环——每次动工具，前面有 `PreToolUse`、后面有 `PostToolUse`，这一轮答完就是 `Stop`。**你想让动作在哪一步发生，就挂对应的那个事件。**
 

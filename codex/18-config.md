@@ -109,14 +109,7 @@ sandbox_mode = "workspace-write"
 
 这个「从高到低」的压制关系，画成一张图你会更有体感——**上面的层盖住下面的层里写了同一个键的部分**：
 
-```mermaid
-flowchart TB
-    A["命令行参数 / --config<br/>(仅本次启动)"] --> B["项目级 .codex/config.toml<br/>(信任时 · 越近越赢)"]
-    B --> C["--profile 预设档<br/>(~/.codex/名字.config.toml)"]
-    C --> D["用户级 ~/.codex/config.toml<br/>(你的全局默认)"]
-    D --> E["系统级 /etc/codex/config.toml<br/>(管理员 · 整机)"]
-    E --> F["内置默认值<br/>(兜底)"]
-```
+![Codex config 六层优先级栈：命令行 > 项目级 > profile > 用户级 > 系统级 > 内置默认](assets/18-config-stack@2x.png)
 
 ![config 六层优先级（高压低）](assets/18-precedence@2x.png)
 

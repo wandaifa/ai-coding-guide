@@ -49,13 +49,7 @@
 
 把这两条记忆通路画出来，它们最后都汇进「新会话的上下文」：
 
-```mermaid
-flowchart TD
-    A["你手写<br/>AGENTS.md"] -->|确定性 · 每轮必读 · 进 git| C["新会话的上下文"]
-    B["Codex 自己生成<br/>Memories"] -->|概率性 · 后台异步 · 本地| C
-    B -.->|默认关 · 要手动开| B
-    D["你的屏幕内容"] -.->|Chronicle 实验性 · 喂记忆| B
-```
+![Codex 两套记忆并行：AGENTS.md 你写（每轮必读 进 git）+ Memories 自动写（默认关 本地）；Chronicle 把屏幕喂入](assets/19-memory-flow@2x.png)
 
 左边是你手写、放进仓库每轮必读的 `AGENTS.md`（确定性那条）；右边是 Codex 工作时自己往 `~/.codex/memories/` 攒、后台异步生成的 Memories（概率性那条，**默认关着**）；最底下那条虚线是 Chronicle——可选地用你的**屏幕内容**给 Memories 补料（第 05 节细讲）。两条实线最后都进「新会话的上下文」，让它一开工就「记得你」。
 

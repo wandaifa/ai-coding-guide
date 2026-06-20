@@ -82,14 +82,7 @@
 
 所以别把它俩对立起来看。**这么说吧：CLI 是你「亲自上手」的入口，SDK 是你「派程序去跑」的入口，背后是同一个 Claude Code。** 一张图把这层关系画清楚：
 
-```mermaid
-flowchart TD
-    A["你（人，坐在终端前）"] -->|敲 claude，边看边调| CLI["CLI 入口"]
-    B["你的程序 / 脚本 / 服务"] -->|调用 query| SDK["Agent SDK 入口"]
-    CLI --> CORE["Claude Code 内核<br/>代理循环 + 内置工具 + 上下文管理"]
-    SDK --> CORE
-    CORE --> ACT["读文件 · 改代码 · 跑命令 · 查网络"]
-```
+![Agent SDK 同一个内核两条入口：人用 CLI 实时调；程序用 SDK 嵌入自动化；共享代理循环 + 工具集](assets/45-sdk-routes@2x.png)
 
 这张图的意思：**上面是两个不同的「入口」——人手敲走 CLI，程序调用走 SDK；但两条路汇到同一个 Claude Code 内核，最后干的活也是同一套**。所以你才会看到「同内核、两入口」这个说法。
 

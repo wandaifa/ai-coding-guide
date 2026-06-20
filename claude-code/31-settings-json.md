@@ -105,13 +105,7 @@
 
 这个「从高到低」的压制关系，画成一张图你会更有体感——**高层像盖在低层上的纸，挡住下面写了同字段的部分**：
 
-```mermaid
-flowchart TB
-    M["Managed 企业策略<br/>(谁都改不动 · 封顶)"] --> C["命令行参数<br/>(--settings · 仅本次会话)"]
-    C --> L["本地级 settings.local.json<br/>(你 · 仅本项目)"]
-    L --> P["项目级 settings.json<br/>(全队 · 进 git)"]
-    P --> U["用户级 ~/.claude/settings.json<br/>(你 · 全局兜底)"]
-```
+![Claude Code settings 五层优先级栈：Managed > 命令行 > 本地 > 项目 > 用户](assets/31-settings-stack@2x.png)
 
 这张图自上而下就是优先级从高到低：**上面的层覆盖下面的层**（仅限单值字段）。换句话说，越靠上的越「临时、具体」，越靠下的越「全局、兜底」——只有当上面所有层都没碰某个字段时，最下面的用户级默认才轮到生效。
 

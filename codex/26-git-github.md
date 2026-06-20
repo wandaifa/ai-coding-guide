@@ -314,19 +314,7 @@ gh auth login
 
 把前八节串起来，你脑子里该有这么一张图——**Codex 在 GitHub 流程里干的是「审查员 + 改手」的活，你守的是「合并放行」那道关。**
 
-```mermaid
-flowchart TD
-    A["改完代码<br/>开 PR"] --> B["本地 /review 先自查<br/>(只读, 开 PR 前)"]
-    B --> C["@codex review<br/>云端审查, 挂 P0/P1 到 PR"]
-    C --> D{"有问题?"}
-    D -->|"@codex fix"| E["云任务改代码<br/>授权后推回分支"]
-    E --> C
-    D -->|"没问题"| F{"合进主干?"}
-    F -->|"merge / force-push"| G["你自己点<br/>(收不回, 人放行)"]
-    style G fill:#5a1e1e,stroke:#e06c6c,color:#fff
-    style A fill:#1e3a5a,stroke:#6ca0e0,color:#fff
-    style B fill:#1e4a3a,stroke:#6ce0a0,color:#fff
-```
+![@codex review 闭环：本地 /review 自查 → 云端 @codex review 挂评论 → fix 改 / 没问题人点 merge（不可逆）](assets/26-pr-review-flow@2x.png)
 
 这张图把一次 PR 协作画成一条线：**开 PR 前本地 `/review` 自查一刀（绿，只读）→ `@codex review` 在云端挑 P0/P1 挂到 PR（可反复 fix、反复审）→ 一旦走到「合进主干」这个岔口，红色那块（merge / force-push）交回你手里。**
 

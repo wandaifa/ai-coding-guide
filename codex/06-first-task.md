@@ -380,18 +380,7 @@ CLI 和 App 到底选哪个？给你一张对照表，按自己的习惯挑：
 
 把这一篇的完整闭环，用一张图收个尾——不管你走 CLI 还是 App，跑的都是这一圈：
 
-```mermaid
-flowchart TD
-    A[建玩具项目<br/>git commit 存档] --> B[启动 Codex<br/>CLI 或 App]
-    B --> C[提需求: 先解释<br/>零风险确认读到文件]
-    C --> D[提需求: 改代码]
-    D --> E[Codex 在沙箱里改<br/>并摊出 diff]
-    E --> F{审 diff<br/>改对没·认不认·删错没}
-    F -->|满意| G[留下改动<br/>git commit 收进版本]
-    F -->|有问题| H[补一句话让它改<br/>或 git restore 退回]
-    H --> E
-    G --> I[git diff 复查<br/>炸了 git restore 兜底]
-```
+![第一个任务的完整循环：先解释 → 再改代码 → 审 diff → 满意 commit / 不满意补话重做；git 兜底](assets/06-task-loop@2x.png)
 
 这张图最该盯住的是中间那个**审 diff 岔口**：Codex 在沙箱里把改动落下去、同步摊出 diff，**你看懂了就留着、看着不对就让它改回去或 Git 退回**——这个「人来把关」的环节，就是你和 Codex 协作的安全阀。开头我那一小时，丢的就是这一步。
 

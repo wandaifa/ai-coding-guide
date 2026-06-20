@@ -178,19 +178,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://chatgpt.com/codex/install.ps1
 
 下面这张图，把四种入口的「本机 / 云端」关系理一下，看不到图也不影响理解，记住上面那张表就够了：
 
-```mermaid
-flowchart TD
-    U["你（下达目标）"] --> A["桌面 App"]
-    U --> B["命令行 CLI"]
-    U --> C["IDE 扩展"]
-    U --> D["云端 Web"]
-    A --> L["你的本机<br/>读本地文件 · 跑本地命令"]
-    B --> L
-    C --> L
-    D --> R["OpenAI 云环境<br/>拉 GitHub 仓库 · 沙箱里跑 · 交 diff/PR"]
-    L --> X["同一个 Codex 代理"]
-    R --> X
-```
+![Codex 四种入口的路由：三个本机入口走本机执行，云端入口走 OpenAI 沙箱，最终都是同一个代理](assets/01-codex-routing@2x.png)
 
 这张图想说的是：四个入口都是你向 Codex 下达目标的「门」，前三扇门通向你的本机、最后一扇通向 OpenAI 的云，但门后是**同一个 Codex**。
 

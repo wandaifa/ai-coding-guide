@@ -59,18 +59,7 @@
 
 光说有点绕，上张图：
 
-```mermaid
-flowchart TD
-    Start([Codex 启动一轮]) --> G{全局层<br/>~/.codex/}
-    G -->|有 override| GO[读 AGENTS.override.md]
-    G -->|没 override| GA[读 AGENTS.md]
-    GO --> P[项目层：从 Git 根<br/>逐级走到当前目录]
-    GA --> P
-    P --> P1[每个目录挑一个：<br/>override → AGENTS → 备选名]
-    P1 --> M[从根到叶拼接<br/>空行隔开]
-    M --> R[越靠近当前目录<br/>排越后、优先级越高]
-    R --> Done([指令链构建完成])
-```
+![AGENTS.md 三层发现链：机器级 ~/.codex/（override 优先）→ 项目层 Git 根逐级累加 → 拼成指令链](assets/11-agents-discovery@2x.png)
 
 这张图把整条链走了一遍：先在全局层二选一，再到项目层逐级各挑一个，最后从根到叶拼起来——**离你越近的，说话越晚、越管用**。
 
