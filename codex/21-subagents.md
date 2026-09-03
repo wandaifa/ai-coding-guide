@@ -2,7 +2,7 @@
 seoTitle: "Codex 子代理教程：配置与并行协作"
 description: "Codex 子代理的创建、角色说明、模型和工具配置、调用方式与上下文隔离，帮助你把复杂任务拆成专项工作，并给出适合中文开发者直接照做的操作思路、检查方法与风险边界。"
 published: "2026-06-12"
-lastVerified: "2026-06-20"
+lastVerified: "2026-09-02"
 author: stormzhang
 officialSources:
   - https://developers.openai.com/codex/subagents
@@ -31,7 +31,7 @@ related:
 - 怎么给不同 agent 选不同模型和「思考强度」，让侦察兵用快模型、审查员用强模型
 - 手把手实战：写一个只读侦察 agent，派它跑、验证它只回摘要、不越权
 
-> ⚠️ 下文凡涉及具体命令、配置键、默认值，都以 Codex [官方文档](https://developers.openai.com/codex/subagents) 为准；模型名（`gpt-5.5` 之类）这种随版本变的东西，看到时以你本地实际显示为准，本篇尽量不写死。
+> ⚠️ 下文凡涉及具体命令、配置键、默认值，都以 Codex [官方文档](https://developers.openai.com/codex/subagents) 为准；模型名（`gpt-5.6-sol` 之类）这种随版本变的东西，看到时以你本地实际显示为准，本篇尽量不写死。
 
 ---
 
@@ -125,7 +125,7 @@ related:
 
 讲完「该不该用」，来真的拆一次。好消息是：**Codex 自带三种内置 agent，开箱即用，你一行配置都不用写。**
 
-> ⚠️ 这里说「三种」不是「三个」，差别很关键：`default` / `worker` / `explorer` 是**三种类型（角色）**，不是「同时只能开三个」。实际派活时，你可以同时 spawn 多个**同类型**的实例——比如让三个 `worker` 各干一块、两个 `explorer` 同时探不同模块——总并发上限由第 05 节那个 `agents.max_threads`（默认 6）管，跟「内置类型有几个」没关系。
+> ⚠️ 这里说「三种」不是「三个」，差别很关键：`default` / `worker` / `explorer` 是**三种类型（角色）**，不是「同时只能开三个」。实际派活时，你可以同时 spawn 多个**同类型**的实例——比如让三个 `worker` 各干一块、两个 `explorer` 同时探不同模块——总并发上限由第 05 节那个 `agents.max_concurrent_threads_per_session`（旧名 `agents.max_threads`）管，跟「内置类型有几个」没关系。
 
 官方给的三种内置 agent：
 
@@ -172,6 +172,8 @@ related:
 ```
 
 **注意这跟你印象里别的工具可能不一样**——它不是「运行某个 agent」的命令，而是「进去看 / 切线程」的命令。派生靠你说话，查看才靠 `/agent`。
+
+终端里还有一个 0.149.0 新增的总控台：**`codex agents`**（注意这里是复数，是终端子命令，不是会话里的斜杠命令）。它打开一个交互式仪表盘，能搜索、打开、重命名、停掉本地 app-server 上的各个 agent 会话，快捷键还能自己配。会话多了想找个「总管视图」，用它；只想在当前会话里切线程，还是用 `/agent`。
 
 ### 抓手二：直接喊话指挥
 
@@ -224,7 +226,7 @@ Prioritize correctness, security, behavior regressions, and missing test coverag
 
 这是自定义 agent 最香的地方——**让每路 agent 用最匹配的脑子**。两个旋钮：
 
-- **`model`**：用哪个模型。官方思路是「侦察用快的、审查用强的」——偏读、扫大文件、跑并行 worker 这种活，用更快更省的（官方点名 `gpt-5.4-mini` 这档）；要审查、要啃多步复杂逻辑的，用更强的（官方列了 `gpt-5.4` / `gpt-5.5` 两档，`gpt-5.5` 是 demanding agents 的起点，reviewer 示例用的是 `gpt-5.4`）。**具体模型名随版本变，以官方为准**，记住这个「侦察用快、攻坚用强」的分配思路就够了。
+- **`model`**：用哪个模型。官方思路是「侦察用快的、审查用强的」——偏读、扫大文件、跑并行 worker 这种活，用更快更省的 `gpt-5.6-terra`；清晰、可重复、量大的活可以降到 `gpt-5.6-luna`；要审查、要啃多步复杂逻辑的 demanding agents，从 `gpt-5.6`（Sol）起步。**具体模型名随版本变，以官方为准**，记住这个「侦察用快、攻坚用强」的分配思路就够了。
 - **`model_reasoning_effort`**：思考强度，三档。
 
 | 思考强度 | 用在 | 代价 |
@@ -235,13 +237,13 @@ Prioritize correctness, security, behavior regressions, and missing test coverag
 
 把它俩落到文件里，给侦察兵配快模型、低思考，给审查员配强模型、高思考：
 
-注意模型名：官方示例的侦察兵用 `gpt-5.3-codex-spark`（需 ChatGPT Pro，研究预览），这里改用 `gpt-5.4-mini`，Pro 用户可换回 `gpt-5.3-codex-spark`。
+注意模型名：官方示例的侦察兵用 `gpt-5.3-codex-spark`（需 ChatGPT Pro，研究预览），这里改用 `gpt-5.6-terra`——官方现在给探索、扫大文件这类 agent 推荐的正是它；Pro 用户可换回 `gpt-5.3-codex-spark`。
 
 ```toml
 # .codex/agents/explorer.toml —— 只读侦察兵：快、省、不动手
 name = "pr_explorer"
 description = "Read-only codebase explorer for gathering evidence before changes."
-model = "gpt-5.4-mini"
+model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 developer_instructions = """
@@ -254,15 +256,20 @@ Trace the real execution path, cite files and symbols, and avoid proposing fixes
 
 > ⚠️ 一个权限上的优先级坑：你在会话里**临时**改的运行时设置（比如 `/permissions` 调整、`--yolo`），会被重新套用到派生出的子代理身上——**哪怕那个 agent 文件里写了不一样的默认值**。也就是说你会话里的实时选择，盖过 agent 文件里的静态默认。
 
-还有一类**全局** `[agents]` 配置，管的是所有子代理的「总闸」，写在你的 `config.toml` 里（不是单个 agent 文件）：
+还有一类**全局** `[agents]` 配置，管的是所有子代理的「总闸」，写在你的 `config.toml` 里（不是单个 agent 文件）。0.145.0 把多代理的设置统一收进了 `[agents]` 这张表（multi-agent V2 转正），当前官方列出的全局键是这些：
 
 | 全局键 | 干嘛的 | 默认值 |
 |--------|--------|--------|
-| `agents.max_threads` | 同时能开几条 agent 线程的上限 | 不设时默认 **6** |
-| `agents.max_depth` | agent 嵌套深度（根会话从 0 算） | 默认 **1**：允许直接子代理、但禁止再往下套 |
+| `agents.enabled` | 多代理工具总开关 | `true`（设 `false` 整个关掉） |
+| `agents.max_concurrent_threads_per_session` | 同一会话里同时开着的派生 agent 线程上限（不含主线程） | 不设时由 Codex 决定；旧键 `agents.max_threads` 现在只是它的**兼容别名** |
+| `agents.default_subagent_model` | 派生 agent 的默认模型 | 不设时继承父会话；显式指名优先 |
+| `agents.default_subagent_reasoning_effort` | 派生 agent 的默认思考强度 | 同上 |
+| `agents.interrupt_message` | agent 被打断时，是否往它的上下文里记一条「你被打断了」的消息 | `true` |
 | `agents.job_max_runtime_seconds` | CSV 批处理任务里每个 worker 的默认超时 | 不设时回退到每个 worker **1800 秒** |
 
-官方对 `max_depth` 有句很实在的提醒：**保持默认 1 就好，除非你真需要递归委派。** 调大它会把「广泛委派」的指令变成层层 fan-out，token、延迟、本机资源消耗全往上窜——`max_threads` 能卡住并发线程数，但卡不住深层递归带来的成本和不可预测性。
+另外 `[agents]` 表还能直接声明**自定义角色**：`agents.<名字>.description`（给 Codex 看的选用指引）和 `agents.<名字>.config_file`（指向这个角色专属的 TOML 配置层，相对路径从声明它的配置文件算起）——相当于不写单独 agent 文件、直接在 `config.toml` 里注册角色的入口。注意**标量设置名是保留字**，不能拿 `enabled`、`max_threads` 这类名字当角色名。
+
+`agents.default_subagent_model` 和 `agents.default_subagent_reasoning_effort` 这对默认值，解决了「不想每个 agent 文件都写一遍模型」的场景：在这里统一定个默认，个别 agent 文件里写了 `model` 的以文件为准，派生时你显式指名的又盖过一切。
 
 > 💡 一句话总结：自定义 agent 就是 `~/.codex/agents/` 或 `.codex/agents/` 下的一个 TOML，**必填 `name` / `description` / `developer_instructions`**；可选字段不写就继承父会话，靠 `model` + `model_reasoning_effort` 给侦察兵配快脑、给审查员配强脑，还能 `sandbox_mode` 单独锁权限。
 

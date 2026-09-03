@@ -2,7 +2,7 @@
 seoTitle: "Codex 命令与 config.toml 配置速查表"
 description: "汇总 Codex CLI 参数、斜杠命令、权限模式、config.toml 字段和常用文件路径，适合日常使用时快速定位准确写法，并给出适合中文开发者直接照做的操作思路、检查方法与风险边界。"
 published: "2026-06-12"
-lastVerified: "2026-06-20"
+lastVerified: "2026-09-02"
 author: stormzhang
 officialSources:
   - https://developers.openai.com/codex/cli/reference
@@ -69,6 +69,11 @@ related:
 | `codex exec` | 非交互跑一次，跑完即退；短写 `codex e` | 稳定 |
 | `codex resume` | 接着上一次的交互会话继续聊 | 稳定 |
 | `codex fork` | 把某次会话「分叉」成新线程，原记录不动 | 稳定 |
+| `codex archive` / `codex unarchive` | 归档 / 恢复某个存过的会话——只清出 resume 列表，不删记录 | 0.140.0 新增 |
+| `codex delete` | **永久删除**某个会话（有确认 safeguard；`--force` 仅限按 UUID 删） | 0.140.0 新增 |
+| `codex agents` | 打开 agent 会话仪表盘：搜索 / 打开 / 重命名 / 停止本地各任务 | 0.149.0 新增 |
+| `codex queue` | 给某个已在跑的会话排队发一条消息 | 0.149.0 新增 |
+| `codex remote-control pair` | 给运行中的远程控制守护进程生成一个短时手动配对码 | 实验性，0.143.0 新增 |
 | `codex apply` | 把云端任务生成的 diff 应用到本地；短写 `codex a` | 稳定 |
 | `codex mcp` | 管理 MCP 服务器（list / add / remove / login） | 实验性 |
 | `codex features` | 列出功能开关并持久启用/禁用 | 稳定 |
@@ -78,11 +83,12 @@ related:
 
 | 标志 | 作用 | 取值 / 备注 |
 | --- | --- | --- |
-| `--model` / `-m` | 临时换模型 | 如 `-m gpt-5.5` |
+| `--model` / `-m` | 临时换模型 | 如 `-m gpt-5.6-terra` |
 | `--image` / `-i` | 附带图片给首条提示 | 多张用逗号分隔或重复 `-i` |
 | `--cd` / `-C` | 指定工作目录后再开干 | 接一个路径 |
 | `--sandbox` / `-s` | 选沙箱档位 | `read-only` / `workspace-write` / `danger-full-access` |
 | `--ask-for-approval` / `-a` | 选审批时机 | `untrusted` / `on-request` / `never` |
+| `--approve-for-me` | 审批请求改交自动审查代理（不扩沙箱边界） | 0.147.0 新增，详见第 15 篇 |
 | `--search` | 开实时联网搜索 | 把 `web_search` 切到 `live`（默认是 `cached`） |
 | `--add-dir` | 额外给某目录写权限 | 可重复，比直接放开全盘安全 |
 | `--profile` / `-p` | 套用某个配置 profile | 叠在基础配置之上 |
@@ -101,8 +107,9 @@ related:
 | `--output-schema` | 给个 JSON Schema，强制最终输出符合该结构 |
 | `--skip-git-repo-check` | 允许在非 Git 目录里跑 |
 | `--ephemeral` | 不在磁盘留会话记录 |
-| `--full-auto` | **已弃用**的兼容标志，会打警告；新脚本改用 `--sandbox workspace-write` |
+| `--full-auto` | **已删除**（0.147.0 起彻底移除，不再兼容）；新脚本改用 `--sandbox workspace-write` |
 | `codex exec resume --last` | 接着最近一次 exec 会话继续 |
+| `codex exec fork` | 从某次会话分叉出新会话，原记录不动（0.148.0 新增） |
 
 > 💡 一句话总结：`-m` 换模型、`-s` 调沙箱、`-a` 调审批、`-o`/`--json` 收结果——把这四件事记牢，命令行八成场景就齐了。
 
@@ -125,10 +132,17 @@ related:
 | `/init` | 在当前目录生成 `AGENTS.md` 脚手架 |
 | `/mcp` | 列出当前会话能调的 MCP 工具（加 `verbose` 看详情） |
 | `/skills` | 浏览并选用本地 skill |
+| `/plugins` | 打开插件浏览器：装 / 卸插件、按空格切启用（详见第 23 篇） |
+| `/hooks` | 查看 / 信任 / 禁用生命周期钩子（详见第 24 篇） |
 | `/agent` | 在已派生的子代理线程之间切换 |
 | `/fast` | 开/关当前模型的 Fast 服务层（`/fast on`/`off`/`status`） |
-| `/new` | 同一 CLI 会话里开一段全新对话 |
-| `/clear` | 清屏并开新对话 |
+| `/new` | 同一 CLI 会话里开一段全新对话（0.146.0 起可顺带命名，如 `/new bug bash`） |
+| `/clear` | 清屏并开新对话（同样可顺带命名） |
+| `/import` | 从 Claude Code / Cursor 导入设置与最近对话（0.140.0 新增，0.145.0 起支持 Cursor） |
+| `/export` | 把当前对话导出成 Markdown，到剪贴板或新文件（0.148.0 新增） |
+| `/usage` | 看账号 token 用量（`daily` / `weekly` / `cumulative`），可兑换限额重置（0.140.0 新增） |
+| `/delete` | 永久删除当前会话并退出（0.140.0 新增） |
+| `/cd` `/pwd` `/cwd` | 查看 / 切换会话的工作目录（0.149.0 新增） |
 | `/quit` 或 `/exit` | 退出 CLI |
 
 提醒一句：`/fast` 是「模型目录（catalog）驱动」的——当前模型如果不提供 Fast 层，菜单里压根不出现 `/fast` ，别以为是 bug 。
@@ -145,7 +159,7 @@ related:
 
 | 配置键 | 作用 | 取值示例 |
 | --- | --- | --- |
-| `model` | 默认模型 | `"gpt-5.5"` |
+| `model` | 默认模型 | `"gpt-5.6"` |
 | `model_reasoning_effort` | 推理强度（可选值随模型变化） | 常见：`none` / `minimal` / `low` / `medium` / `high` / `xhigh` |
 | `model_reasoning_summary` | 推理摘要详细度 | `auto` / `concise` / `detailed` / `none` |
 | `service_tier` | 服务层级 | `flex` / `fast`（提速相关，搭配 `/fast`） |
@@ -153,14 +167,14 @@ related:
 | `sandbox_workspace_write.network_access` | 工作区写模式下是否放开联网 | `true` / `false` |
 | `sandbox_workspace_write.writable_roots` | 额外可写目录 | `["/path/a", "/path/b"]` |
 | `approval_policy` | 审批策略 | `untrusted` / `on-request` / `never` |
-| `web_search` | 联网搜索模式 | `disabled` / `cached` / `live`（默认 `cached`） |
+| `web_search` | 联网搜索模式 | `disabled` / `cached` / `indexed` / `live`（默认 `cached`） |
 | `review_model` | `/review` 用的模型 | 不填则用当前会话模型 |
 | `model_instructions_file` | 用某文件替代内置指令 | 一个路径 |
 
 一个最小可用的 `config.toml` 长这样，复制进去改改就能用：
 
 ```toml
-model = "gpt-5.5"
+model = "gpt-5.6"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
@@ -195,7 +209,7 @@ network_access = false
 codex --sandbox workspace-write --ask-for-approval on-request
 ```
 
-补充两个我踩过的点：想给 Codex 多开一个可写目录，**别图省事直接上 `danger-full-access`，用 `--add-dir` 精准放行那一个目录**就够；`--full-auto` 是老的兼容写法，已弃用，新脚本一律改成 `--sandbox workspace-write`。
+补充两个我踩过的点：想给 Codex 多开一个可写目录，**别图省事直接上 `danger-full-access`，用 `--add-dir` 精准放行那一个目录**就够；`--full-auto` 这个老标志已在 0.147.0 彻底删除，老脚本一律改成 `--sandbox workspace-write`。
 
 > 💡 一句话总结：本地默认「`workspace-write` + `on-request`」，CI 用「指定沙箱 + `never`」，要放权先想能不能用 `--add-dir` 替代全开。
 
@@ -207,11 +221,12 @@ codex --sandbox workspace-write --ask-for-approval on-request
 
 | 模型 | 定位 | 什么时候用 |
 | --- | --- | --- |
-| `gpt-5.5` | 旗舰，最强 | 复杂编程、重构、研究类硬活 |
-| `gpt-5.4-mini` | 轻量、快、省 | 杂活、批量任务、子代理 |
+| `gpt-5.6-sol` | 旗舰、默认，最强 | 复杂编程、重构、研究类硬活 |
+| `gpt-5.6-terra` | 日常主力 | 日常开发，性能追平上代旗舰、更省 |
+| `gpt-5.6-luna` | 轻量、快、省 | 杂活、批量任务、子代理 |
 | `gpt-5.3-codex-spark` | 即时型研究预览（仅 ChatGPT Pro） | 求近乎秒回的实时迭代 |
 
-`gpt-5.2` 和 `gpt-5.3-codex` 已弃用，别再写进配置或 `--model` 里。
+`gpt-5.2` 和 `gpt-5.3-codex` 已弃用，`gpt-5.4` 和 `gpt-5.4-mini` 也已于 2026 年 8 月 31 日退役（ChatGPT 登录），都别再写进配置或 `--model` 里。
 
 推理强度由 `model_reasoning_effort` 控制，**可选档位随模型变化**（哪几档能用，以 `/model` 面板和当前模型文档为准），常见档位：
 
@@ -224,7 +239,7 @@ codex --sandbox workspace-write --ask-for-approval on-request
 | `high` | 深思熟虑 | 多文件改动、设计权衡 |
 | `xhigh` | 顶格（模型相关） | 真·硬骨头，确定值得等 |
 
-我自己的默认就是「`gpt-5.5` + `medium`」打天下，只在确定要啃硬骨头时手动提到 `high`。前面第 30 篇说过我犯的蠢——长期锁死 `xhigh` 改个 typo 等一分钟，**那种「最强焦虑」省下来的，比你以为的多得多。**
+我自己的默认就是「`gpt-5.6` + `medium`」打天下，只在确定要啃硬骨头时手动提到 `high`。前面第 30 篇说过我犯的蠢——长期锁死 `xhigh` 改个 typo 等一分钟，**那种「最强焦虑」省下来的，比你以为的多得多。**
 
 > 💡 一句话总结：日常「旗舰 + `medium`」，体力活降到 `minimal`/`low`，硬骨头才提 `high`/`xhigh`，弃用模型一个别碰。
 
@@ -239,7 +254,7 @@ codex --sandbox workspace-write --ask-for-approval on-request
 | MCP（外接工具，像 USB 接口） | `codex mcp list` / `codex mcp add <name> ...` | 命令行管服务器；会话里 `/mcp` 看可用工具（实验性） |
 | MCP（HTTP 服务器登录） | `codex mcp login <name>` | 仅支持 OAuth 的 streamable HTTP 服务器 |
 | 配置 MCP 服务器 | `config.toml` 里 `[mcp_servers.<id>]` | `command`/`args`/`url` 等键定义一台服务器 |
-| 子代理（并行干活） | `config.toml` 里 `[agents]` / `agents.<name>.*` | `max_threads` 默认 `6`；会话里 `/agent` 切线程 |
+| 子代理（并行干活） | `config.toml` 里 `[agents]` / `agents.<name>.*` | 并发上限键为 `agents.max_concurrent_threads_per_session`（旧名 `max_threads` 保留兼容）；会话里 `/agent` 切线程 |
 | Skills（任务专用技能） | 会话里 `/skills` | 浏览并选用；`config.toml` 里用 `[[skills.config]]`（带 `path`/`enabled`）做启用覆盖 |
 
 注意 `codex mcp` 整组目前标的是「实验性」，子命令和行为可能随版本变，用前以 `codex mcp --help` 为准。
@@ -289,7 +304,7 @@ codex exec --help
 - **斜杠命令**：会话内 `/model`、`/status`、`/compact`、`/diff` 先练成肌肉记忆。
 - **`config.toml`**：`model`、`model_reasoning_effort`、`sandbox_mode`、`approval_policy` 定好默认人格。
 - **权限沙箱**：本地「`workspace-write` + `on-request`」，CI「指定沙箱 + `never`」，放权优先 `--add-dir`。
-- **模型与强度**：旗舰 `gpt-5.5` + `medium` 打天下，弃用模型别碰。
+- **模型与强度**：旗舰 `gpt-5.6-sol` + `medium` 打天下，退役模型别碰。
 - **进阶入口**：MCP 走 `codex mcp`、子代理靠 `[agents]`、Skills 用 `/skills`。
 
 **你现在应该能**：丢掉那个歪歪扭扭的备忘 txt，要哪条命令、哪个配置键、哪个档位，扫一眼这页就走，拿不准时一句 `--help` 兜底，不用再开浏览器现翻文档。
